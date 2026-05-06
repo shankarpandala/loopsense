@@ -32,61 +32,51 @@
       <button id="btn-reset"   class="btn btn-danger  hidden">↺ Reset</button>
     </div>
 
-    <div class="admin-grid">
-
-      <!-- Left column: live dashboard -->
-      <div>
-        <!-- Stats -->
-        <div class="panel" style="margin-bottom:16px">
-          <h2>Live Stats</h2>
-          <div class="stats-row">
-            <div class="stat">
-              <span class="stat-value" id="stat-timer">5:00</span>
-              <span class="stat-label">Remaining</span>
-            </div>
-            <div class="stat">
-              <span class="stat-value" id="stat-votes">0</span>
-              <span class="stat-label">Active Votes</span>
-            </div>
+    <!-- Swarm canvas — full width -->
+    <div class="panel" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2 style="margin:0">Collective Consensus</h2>
+        <div class="stats-row" style="margin:0;gap:20px">
+          <div class="stat">
+            <span class="stat-value" id="stat-timer">5:00</span>
+            <span class="stat-label">Remaining</span>
           </div>
-        </div>
-
-        <!-- Vote bars -->
-        <div class="panel">
-          <h2>Vote Counts</h2>
-          <div id="bar-list" class="bar-list">
-            <p style="color:var(--text-muted);font-size:0.85rem">No options yet.</p>
+          <div class="stat">
+            <span class="stat-value" id="stat-votes">0</span>
+            <span class="stat-label">Votes</span>
           </div>
         </div>
       </div>
+      <canvas id="swarm-canvas"></canvas>
+    </div>
 
-      <!-- Right column: setup -->
-      <div>
-        <!-- Option management (idle only) -->
-        <div class="panel" id="setup-panel">
-          <h2>Options</h2>
-          <div class="input-row">
-            <input type="text" id="opt-label" placeholder="Option label…" maxlength="60" autocomplete="off">
-          </div>
-          <div class="input-row-actions">
-            <input type="color" id="opt-color" value="#6366f1">
-            <button class="btn btn-primary btn-sm" id="btn-add-opt" style="flex:1">Add Option</button>
-          </div>
-          <ul class="option-list" id="option-list">
-            <li style="color:var(--text-muted);font-size:0.85rem;padding:4px 0">No options added yet.</li>
-          </ul>
-          <div class="duration-row">
-            <label for="duration-input">Duration (sec)</label>
-            <input type="number" id="duration-input" value="300" min="10" max="3600">
-          </div>
+    <!-- Bottom grid: setup -->
+    <div class="admin-grid">
+
+      <!-- Left: winner display (when published) -->
+      <div class="panel hidden" id="winner-panel" style="text-align:center">
+        <h2>Winner</h2>
+        <div style="font-size:3rem;margin:8px 0">🏆</div>
+        <div id="admin-winner-label" style="font-size:1.5rem;font-weight:800;margin-bottom:4px">—</div>
+        <div id="admin-winner-votes" style="color:var(--text-muted);font-size:0.9rem"></div>
+      </div>
+
+      <!-- Right: option setup (idle only) -->
+      <div class="panel" id="setup-panel">
+        <h2>Options</h2>
+        <div class="input-row">
+          <input type="text" id="opt-label" placeholder="Option label…" maxlength="60" autocomplete="off">
         </div>
-
-        <!-- Winner display -->
-        <div class="panel hidden" id="winner-panel" style="margin-top:16px;text-align:center">
-          <h2>Winner</h2>
-          <div style="font-size:3rem;margin:8px 0">🏆</div>
-          <div id="admin-winner-label" style="font-size:1.5rem;font-weight:800;margin-bottom:4px">—</div>
-          <div id="admin-winner-votes" style="color:var(--text-muted);font-size:0.9rem"></div>
+        <div class="input-row-actions">
+          <input type="color" id="opt-color" value="#6366f1">
+          <button class="btn btn-primary btn-sm" id="btn-add-opt" style="flex:1">Add Option</button>
+        </div>
+        <ul class="option-list" id="option-list" style="margin-top:12px">
+          <li style="color:var(--text-muted);font-size:0.85rem;padding:4px 0">No options added yet.</li>
+        </ul>
+        <div class="duration-row">
+          <label for="duration-input">Duration (sec)</label>
+          <input type="number" id="duration-input" value="300" min="10" max="3600">
         </div>
       </div>
 
