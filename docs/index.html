@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Loopsense — Vote</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span>Loop</span>sense</h1>
+      <div class="status-bar">
+        <span id="phase-badge" class="badge badge-idle">
+          <span class="dot"></span>
+          <span id="phase-label">Waiting</span>
+        </span>
+        <div class="conn-indicator">
+          <div id="conn-dot" class="conn-dot"></div>
+          <span id="conn-label">Connecting…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idle / waiting screen -->
+    <div id="screen-idle" class="waiting">
+      <h2>Waiting for the session to begin</h2>
+      <p>The admin will start the voting round shortly.</p>
+    </div>
+
+    <!-- Running screen -->
+    <div id="screen-running" class="hidden">
+      <div class="timer" id="timer-display">5:00</div>
+      <p class="vote-hint">Tap an option to vote &nbsp;·&nbsp; Tap again to remove</p>
+      <div class="vote-grid" id="vote-grid"></div>
+    </div>
+
+    <!-- Stopped screen -->
+    <div id="screen-stopped" class="closed-screen hidden">
+      <h2>Voting has closed</h2>
+      <p>The admin will publish the winner shortly.</p>
+    </div>
+  </div>
+
+  <!-- Winner overlay (hidden until winner_published) -->
+  <div id="winner-overlay" class="winner-overlay hidden">
+    <div class="winner-card">
+      <div class="trophy">🏆</div>
+      <div class="winner-label" id="winner-label">—</div>
+      <div class="winner-votes" id="winner-votes"></div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="vote.js"></script>
+</body>
+</html>
