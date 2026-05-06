@@ -81,7 +81,7 @@ function renderVoteButtons() {
           </svg>
         </span>
         <span class="color-dot" style="background:${opt.color}"></span>
-        ${escHtml(opt.label)}
+        <span class="btn-label-text">${escHtml(opt.label)}</span>
       </span>
       <span class="btn-count" data-count="${opt.id}">${count}</span>
     `;

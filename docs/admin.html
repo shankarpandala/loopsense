@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Loopsense — Admin</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -66,9 +66,11 @@
         <div class="panel" id="setup-panel">
           <h2>Options</h2>
           <div class="input-row">
-            <input type="text" id="opt-label" placeholder="Option label…" maxlength="60">
+            <input type="text" id="opt-label" placeholder="Option label…" maxlength="60" autocomplete="off">
+          </div>
+          <div class="input-row-actions">
             <input type="color" id="opt-color" value="#6366f1">
-            <button class="btn btn-primary btn-sm" id="btn-add-opt">Add</button>
+            <button class="btn btn-primary btn-sm" id="btn-add-opt" style="flex:1">Add Option</button>
           </div>
           <ul class="option-list" id="option-list">
             <li style="color:var(--text-muted);font-size:0.85rem;padding:4px 0">No options added yet.</li>

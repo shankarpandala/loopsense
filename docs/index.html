@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Loopsense — Vote</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -31,9 +31,7 @@
     <!-- Running screen -->
     <div id="screen-running" class="hidden">
       <div class="timer" id="timer-display">5:00</div>
-      <p style="text-align:center;color:var(--text-muted);margin-bottom:20px;font-size:0.9rem;">
-        Tap an option to vote. Tap again to remove your vote.
-      </p>
+      <p class="vote-hint">Tap an option to vote &nbsp;·&nbsp; Tap again to remove</p>
       <div class="vote-grid" id="vote-grid"></div>
     </div>
 
