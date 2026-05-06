@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loopsense — Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="admin-container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1><span>Loop</span>sense <span style="font-size:0.8em;color:var(--text-muted)">Admin</span></h1>
+      <div class="status-bar">
+        <span id="phase-badge" class="badge badge-idle">
+          <span class="dot" id="phase-dot"></span>
+          <span id="phase-label">Idle</span>
+        </span>
+        <div class="conn-indicator">
+          <div id="conn-dot" class="conn-dot"></div>
+          <span id="conn-label">Connecting…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control buttons -->
+    <div class="controls" id="controls">
+      <button id="btn-start"   class="btn btn-success hidden">▶ Start Game</button>
+      <button id="btn-stop"    class="btn btn-warning hidden">⏹ Stop Game</button>
+      <button id="btn-publish" class="btn btn-primary hidden">🏆 Publish Winner</button>
+      <button id="btn-reset"   class="btn btn-danger  hidden">↺ Reset</button>
+    </div>
+
+    <div class="admin-grid">
+
+      <!-- Left column: live dashboard -->
+      <div>
+        <!-- Stats -->
+        <div class="panel" style="margin-bottom:16px">
+          <h2>Live Stats</h2>
+          <div class="stats-row">
+            <div class="stat">
+              <span class="stat-value" id="stat-timer">5:00</span>
+              <span class="stat-label">Remaining</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="stat-votes">0</span>
+              <span class="stat-label">Active Votes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vote bars -->
+        <div class="panel">
+          <h2>Vote Counts</h2>
+          <div id="bar-list" class="bar-list">
+            <p style="color:var(--text-muted);font-size:0.85rem">No options yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: setup -->
+      <div>
+        <!-- Option management (idle only) -->
+        <div class="panel" id="setup-panel">
+          <h2>Options</h2>
+          <div class="input-row">
+            <input type="text" id="opt-label" placeholder="Option label…" maxlength="60">
+            <input type="color" id="opt-color" value="#6366f1">
+            <button class="btn btn-primary btn-sm" id="btn-add-opt">Add</button>
+          </div>
+          <ul class="option-list" id="option-list">
+            <li style="color:var(--text-muted);font-size:0.85rem;padding:4px 0">No options added yet.</li>
+          </ul>
+          <div class="duration-row">
+            <label for="duration-input">Duration (sec)</label>
+            <input type="number" id="duration-input" value="300" min="10" max="3600">
+          </div>
+        </div>
+
+        <!-- Winner display -->
+        <div class="panel hidden" id="winner-panel" style="margin-top:16px;text-align:center">
+          <h2>Winner</h2>
+          <div style="font-size:3rem;margin:8px 0">🏆</div>
+          <div id="admin-winner-label" style="font-size:1.5rem;font-weight:800;margin-bottom:4px">—</div>
+          <div id="admin-winner-votes" style="color:var(--text-muted);font-size:0.9rem"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
