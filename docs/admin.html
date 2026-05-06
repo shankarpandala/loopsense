@@ -54,11 +54,17 @@
     <div class="admin-grid">
 
       <!-- Left: winner display (when published) -->
-      <div class="panel hidden" id="winner-panel" style="text-align:center">
+      <div class="panel hidden" id="winner-panel">
         <h2>Winner</h2>
-        <div style="font-size:3rem;margin:8px 0">🏆</div>
-        <div id="admin-winner-label" style="font-size:1.5rem;font-weight:800;margin-bottom:4px">—</div>
-        <div id="admin-winner-votes" style="color:var(--text-muted);font-size:0.9rem"></div>
+        <div style="text-align:center;padding:8px 0 16px">
+          <div style="font-size:2.5rem;margin-bottom:8px">🏆</div>
+          <div id="admin-winner-label" style="font-size:1.4rem;font-weight:800;margin-bottom:4px">—</div>
+          <div id="admin-winner-votes" style="color:var(--text-muted);font-size:0.9rem"></div>
+        </div>
+        <div id="sentiment-comparison" class="hidden">
+          <div class="sentiment-header">Did the group change its mind?</div>
+          <div class="sentiment-grid" id="sentiment-rows"></div>
+        </div>
       </div>
 
       <!-- Right: option setup (idle only) -->

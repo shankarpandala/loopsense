@@ -156,15 +156,59 @@ socket.on('state:tick', (data) => {
   }
 });
 
-socket.on('state:winner', ({ winner }) => {
+socket.on('state:winner', ({ winner, initialSnapshot }) => {
   if (!winner) return;
   state.phase = 'winner_published';
   $('winner-label').textContent = winner.label;
   $('winner-label').style.color = winner.color || 'var(--accent)';
   $('winner-votes').textContent = `${winner.count} vote${winner.count !== 1 ? 's' : ''}`;
+  renderSentimentComparison(initialSnapshot, state.counts, state.options);
   $('winner-overlay').classList.remove('hidden');
   showScreen('stopped');
 });
+
+function renderSentimentComparison(snapshot, finalCounts, options) {
+  const section = $('sentiment-comparison');
+  const rows    = $('sentiment-rows');
+  if (!snapshot || !options.length) { section.classList.add('hidden'); return; }
+
+  const initTotal  = Math.max(1, snapshot.totalVotes);
+  const finalTotal = Math.max(1, Object.values(finalCounts).reduce((a, b) => a + b, 0));
+
+  rows.innerHTML = options.map(opt => {
+    const initCount  = snapshot.counts[opt.id] || 0;
+    const finalCount = finalCounts[opt.id] || 0;
+    const initPct    = Math.round((initCount  / initTotal)  * 100);
+    const finalPct   = Math.round((finalCount / finalTotal) * 100);
+    const delta      = finalPct - initPct;
+    const arrow      = delta > 0 ? '▲' : delta < 0 ? '▼' : '—';
+    const arrowColor = delta > 0 ? 'var(--success)' : delta < 0 ? 'var(--danger)' : 'var(--text-muted)';
+
+    return `
+      <div class="sentiment-row">
+        <span class="sentiment-opt" style="color:${opt.color}">${escHtml(opt.label)}</span>
+        <div class="sentiment-bars">
+          <div class="sentiment-bar-wrap">
+            <span class="sentiment-label">Initial</span>
+            <div class="sentiment-track">
+              <div class="sentiment-fill" style="width:${initPct}%;background:${opt.color};opacity:0.45"></div>
+            </div>
+            <span class="sentiment-pct">${initPct}%</span>
+          </div>
+          <div class="sentiment-bar-wrap">
+            <span class="sentiment-label">Final</span>
+            <div class="sentiment-track">
+              <div class="sentiment-fill" style="width:${finalPct}%;background:${opt.color}"></div>
+            </div>
+            <span class="sentiment-pct">${finalPct}% <span style="color:${arrowColor};font-size:0.75em">${arrow}</span></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  section.classList.remove('hidden');
+}
 
 socket.on('state:reset', () => {
   state.currentVote = null;

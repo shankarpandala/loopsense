@@ -9,6 +9,7 @@ let state = {
   remainingMs: 300_000,
   duration: 300_000,
   winner: null,
+  initialSnapshot: null,
 };
 
 // ---------------------------------------------------------------------------
@@ -92,9 +93,53 @@ function renderWinner() {
     $('admin-winner-label').textContent  = state.winner.label;
     $('admin-winner-label').style.color  = state.winner.color || 'var(--accent)';
     $('admin-winner-votes').textContent  = `${state.winner.count} vote${state.winner.count !== 1 ? 's' : ''}`;
+    renderSentimentComparison(state.initialSnapshot, state.counts, state.options);
   } else {
     panel.classList.add('hidden');
   }
+}
+
+function renderSentimentComparison(snapshot, finalCounts, options) {
+  const section = $('sentiment-comparison');
+  const rows    = $('sentiment-rows');
+  if (!snapshot || !options.length) { section.classList.add('hidden'); return; }
+
+  const initTotal  = Math.max(1, snapshot.totalVotes);
+  const finalTotal = Math.max(1, Object.values(finalCounts).reduce((a, b) => a + b, 0));
+
+  rows.innerHTML = options.map(opt => {
+    const initCount  = snapshot.counts[opt.id] || 0;
+    const finalCount = finalCounts[opt.id] || 0;
+    const initPct    = Math.round((initCount  / initTotal)  * 100);
+    const finalPct   = Math.round((finalCount / finalTotal) * 100);
+    const delta      = finalPct - initPct;
+    const arrow      = delta > 0 ? '▲' : delta < 0 ? '▼' : '—';
+    const arrowColor = delta > 0 ? 'var(--success)' : delta < 0 ? 'var(--danger)' : 'var(--text-muted)';
+
+    return `
+      <div class="sentiment-row">
+        <span class="sentiment-opt" style="color:${opt.color}">${escHtml(opt.label)}</span>
+        <div class="sentiment-bars">
+          <div class="sentiment-bar-wrap">
+            <span class="sentiment-label">Initial</span>
+            <div class="sentiment-track">
+              <div class="sentiment-fill" style="width:${initPct}%;background:${opt.color};opacity:0.45"></div>
+            </div>
+            <span class="sentiment-pct">${initPct}%</span>
+          </div>
+          <div class="sentiment-bar-wrap">
+            <span class="sentiment-label">Final</span>
+            <div class="sentiment-track">
+              <div class="sentiment-fill" style="width:${finalPct}%;background:${opt.color}"></div>
+            </div>
+            <span class="sentiment-pct">${finalPct}% <span style="color:${arrowColor};font-size:0.75em">${arrow}</span></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  section.classList.remove('hidden');
 }
 
 // ---------------------------------------------------------------------------
@@ -179,14 +224,15 @@ socket.on('state:tick', (data) => {
   if (data.phase === 'stopped') renderControls();
 });
 
-socket.on('state:winner', ({ winner }) => {
-  state.winner = winner;
-  state.phase  = 'winner_published';
+socket.on('state:winner', ({ winner, initialSnapshot }) => {
+  state.winner          = winner;
+  state.initialSnapshot = initialSnapshot;
+  state.phase           = 'winner_published';
   renderAll();
 });
 
 socket.on('state:reset', () => {
-  state = { phase: 'idle', options: [], counts: {}, remainingMs: 300_000, duration: 300_000, winner: null };
+  state = { phase: 'idle', options: [], counts: {}, remainingMs: 300_000, duration: 300_000, winner: null, initialSnapshot: null };
   $('duration-input').value = 300;
   resetBall();
   renderAll();

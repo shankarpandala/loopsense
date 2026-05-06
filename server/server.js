@@ -24,7 +24,8 @@ const gameState = {
   startedAt: null,
   duration: 300_000, // ms (default 5 min)
   remainingMs: 300_000,
-  winner: null,  // { id, label, count }
+  winner: null,        // { id, label, color, count }
+  initialSnapshot: null, // { counts, totalVotes } — captured at 5s mark, hidden until winner published
 };
 
 const adminSockets = new Set();
@@ -56,6 +57,8 @@ function getPublicState() {
     duration: gameState.duration,
     remainingMs: gameState.remainingMs,
     winner: gameState.winner,
+    // Only reveal initial snapshot once winner is published
+    initialSnapshot: gameState.phase === 'winner_published' ? gameState.initialSnapshot : null,
   };
 }
 
@@ -163,8 +166,18 @@ io.on('connection', (socket) => {
     gameState.remainingMs = gameState.duration;
     gameState.votes = {};
     gameState.counts = computeCounts();
+    gameState.initialSnapshot = null;
     transitionTo('running');
     startTick();
+
+    // Capture initial public sentiment at 5 seconds — kept secret until winner published
+    setTimeout(() => {
+      if (gameState.phase === 'running') {
+        const counts = computeCounts();
+        const totalVotes = Object.values(counts).reduce((a, b) => a + b, 0);
+        gameState.initialSnapshot = { counts: { ...counts }, totalVotes };
+      }
+    }, 5000);
   });
 
   socket.on('admin:stop', () => {
@@ -185,7 +198,7 @@ io.on('connection', (socket) => {
     }
     gameState.winner = winnerOpt ? { id: winnerOpt.id, label: winnerOpt.label, color: winnerOpt.color, count: maxCount } : null;
     transitionTo('winner_published');
-    io.emit('state:winner', { winner: gameState.winner });
+    io.emit('state:winner', { winner: gameState.winner, initialSnapshot: gameState.initialSnapshot });
   });
 
   socket.on('admin:reset', () => {
@@ -201,6 +214,7 @@ io.on('connection', (socket) => {
     gameState.duration = 300_000;
     gameState.remainingMs = 300_000;
     gameState.winner = null;
+    gameState.initialSnapshot = null;
     io.emit('state:reset', {});
     broadcastFull();
   });
