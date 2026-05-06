@@ -208,10 +208,15 @@ const ctx    = canvas.getContext('2d');
 // The one consensus ball
 let ball  = { x: 0, y: 0, vx: 0, vy: 0 };
 let trail = [];           // [{x,y}] — recent path
-const TRAIL_MAX  = 180;
-const STEP_FORCE = 0.18;  // force applied per frame toward consensus target
-const MAX_SPEED  = 2.2;   // pixels per frame cap
-const DAMPING    = 0.91;
+const TRAIL_MAX = 180;
+const DAMPING   = 0.96;
+
+// Speed is canvas-relative so travel time stays ~30s at full consensus
+// regardless of screen size.
+// Distance centre→option ≈ canvas * 0.5 * 0.62 = canvas * 0.31
+// At 60fps, 30s = 1800 frames → speed = canvas * 0.31 / 1800 ≈ canvas * 0.000172
+function maxSpeed()  { return Math.min(cw(), ch()) * 0.000172; }
+function stepForce() { return maxSpeed() * 0.4; }  // reach top speed quickly
 
 function resetBall() {
   ball  = { x: canvas.width / 2, y: canvas.height / 2, vx: 0, vy: 0 };
@@ -308,17 +313,18 @@ function drawFrame() {
   const dy     = target.y - ball.y;
   const dist   = Math.hypot(dx, dy);
 
-  if (dist > 0.8) {
+  if (dist > 0.5) {
     // Apply unit-step force in direction of consensus
-    ball.vx += (dx / dist) * STEP_FORCE;
-    ball.vy += (dy / dist) * STEP_FORCE;
+    ball.vx += (dx / dist) * stepForce();
+    ball.vy += (dy / dist) * stepForce();
   }
 
-  // Cap speed so ball always moves in deliberate steps
+  // Hard cap — ball moves like a turtle even at full consensus
   const speed = Math.hypot(ball.vx, ball.vy);
-  if (speed > MAX_SPEED) {
-    ball.vx = (ball.vx / speed) * MAX_SPEED;
-    ball.vy = (ball.vy / speed) * MAX_SPEED;
+  const cap   = maxSpeed();
+  if (speed > cap) {
+    ball.vx = (ball.vx / speed) * cap;
+    ball.vy = (ball.vy / speed) * cap;
   }
 
   ball.vx *= DAMPING;
